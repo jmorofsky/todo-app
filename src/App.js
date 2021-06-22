@@ -1,15 +1,32 @@
 import React from 'react'
 import TodoItem from './components/TodoItem'
 import './css/style.css'
-import todosData from './todosData'
 
 class App extends React.Component {
   constructor() {
     super()
     this.state = {
-      todos: todosData
+      text: "",
+      todos: []
     }
     this.handleChange = this.handleChange.bind(this)
+    this.handleSubmit = this.handleSubmit.bind(this)
+    this.handleText = this.handleText.bind(this)
+  }
+
+  handleSubmit(event) {
+    event.preventDefault()
+    const text = this.state.text
+    this.setState(prevState => {
+      let updatedTodos = []
+      updatedTodos = prevState.todos.slice(0)
+      updatedTodos.push({ id: prevState.todos.length, text: text, completed: false })
+
+      return {
+        text: "",
+        todos: updatedTodos
+      }
+    })
   }
 
   handleChange(id) {
@@ -29,6 +46,13 @@ class App extends React.Component {
     })
   }
 
+  handleText(event) {
+    const value = event.target.value
+    this.setState({
+      text: value
+    })
+  }
+
   render() {
     const todoItems = this.state.todos.map(item =>
       <TodoItem
@@ -37,8 +61,24 @@ class App extends React.Component {
         handleChange={this.handleChange}
       />
     )
+
+    const submitStyle = {
+      display: 'none'
+    }
+
     return (
       <div className="todo-list">
+        <form onSubmit={this.handleSubmit}>
+          <input
+            type="text"
+            placeholder="Add a new item"
+            autoComplete="off"
+            value={this.state.text}
+            onChange={this.handleText}
+          />
+          <input type="submit" style={submitStyle} />
+        </form>
+
         {todoItems}
       </div>
     )
